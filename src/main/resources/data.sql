@@ -1,6 +1,3 @@
-DROP  table  slots;
-DROP  table  tables;
-DROP  table  reservations;
 
 CREATE TABLE IF NOT EXISTS slots(id integer PRIMARY KEY, slot_time text);
 CREATE TABLE IF NOT EXISTS  tables(id integer PRIMARY KEY, tbl_name text);
@@ -8,7 +5,7 @@ CREATE TABLE IF NOT EXISTS  reservations(id varchar(50) PRIMARY KEY, name varcha
 
 insert into slots (id, slot_time) values (1, '11AM-1PM');
 insert into slots (id, slot_time) values (2, '1PM-3PM');
-insert into slots (id, slot_time) values (3, '3PM-5 PM');
+insert into slots (id, slot_time) values (3, '3PM-5PM');
 insert into slots (id, slot_time) values (4, '5PM-7PM');
 
 insert into tables (id, tbl_name) values (1, 'table1');

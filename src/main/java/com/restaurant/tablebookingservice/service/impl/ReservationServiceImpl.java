@@ -1,19 +1,26 @@
 package com.restaurant.tablebookingservice.service.impl;
 
 import com.restaurant.tablebookingservice.dto.*;
+import com.restaurant.tablebookingservice.dto.exceptions.ReservationException;
 import com.restaurant.tablebookingservice.entity.Reservation;
 import com.restaurant.tablebookingservice.repo.ReservationsRepo;
 import com.restaurant.tablebookingservice.service.Mapper;
-import com.restaurant.tablebookingservice.service.SlotsService;
+import com.restaurant.tablebookingservice.service.ReservationService;
 import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 @Service
-public class SlotServiceImpl implements SlotsService {
+public class ReservationServiceImpl implements ReservationService {
 
     @Autowired
     private Mapper mapper;
@@ -23,14 +30,22 @@ public class SlotServiceImpl implements SlotsService {
 
     Logger logger = LoggerFactory.getLogger("ReservationServiceImpl");
 
-    @Override
-    public AvailableSlotsResponse getAvailableSlots(String date) {
-        return null;
+    public List<AvailableSlotsResponse> getAvailableSlots(LocalDate date) {
+        return mapper.toAvailableSlots(reservationsRepo.findAllByReservationDate(date), date);
     }
 
     @Override
-    public ActiveReservationsResponse getActiveBookings(String date) {
-        return null;
+    public List<ActiveReservationsResponse> getActiveBookings(LocalDate date) {
+        List<Reservation> activeReservations = reservationsRepo.findAllByReservationDate(date);
+
+        return activeReservations.stream().map(mapper::toActiveReservation).collect(Collectors.toList());
+    }
+
+    @Override
+    public ActiveReservationsResponse getActiveReservation(String id) {
+        Optional<Reservation> reservation = reservationsRepo.findById(id);
+        return mapper.toActiveReservation(reservation.orElseThrow(() ->
+                new ReservationException("RESERVATION_DOESNT_EXIST", HttpStatus.NOT_FOUND)));
     }
 
     @Override

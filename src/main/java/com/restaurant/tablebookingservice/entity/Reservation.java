@@ -1,8 +1,6 @@
 package com.restaurant.tablebookingservice.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity(name = "reservations")
@@ -13,21 +11,29 @@ public class Reservation {
     private String contact;
     @Column(name = "reservation_date")
     private LocalDate reservationDate;
-    @Column(name = "slot_id")
-    private Integer slotId;
-    @Column(name = "table_id")
-    private Integer tableId;
+//    @Column(name = "slot_id")
+//    private Integer slotId;
+//    @Column(name = "table_id")
+//    private Integer tableId;
+
+    @ManyToOne
+    @JoinColumn(name = "slot_id", nullable = false)
+    private Slot slot;
+
+    @ManyToOne
+    @JoinColumn(name = "table_id", nullable = false)
+    private Table table;
 
     public Reservation() {
     }
 
-    public Reservation(String id, String name, String contact, LocalDate reservationDate, Integer slotId, Integer tableId) {
+    public Reservation(String id, String name, String contact, LocalDate reservationDate, Slot slot, Table table) {
         this.id = id;
         this.name = name;
         this.contact = contact;
         this.reservationDate = reservationDate;
-        this.slotId = slotId;
-        this.tableId = tableId;
+        this.slot = slot;
+        this.table = table;
     }
 
     public String getId() {
@@ -62,20 +68,36 @@ public class Reservation {
         this.reservationDate = reservationDate;
     }
 
-    public Integer getSlotId() {
-        return slotId;
+//    public Integer getSlotId() {
+//        return slotId;
+//    }
+//
+//    public void setSlotId(Integer slotId) {
+//        this.slotId = slotId;
+//    }
+//
+//    public Integer getTableId() {
+//        return tableId;
+//    }
+//
+//    public void setTableId(Integer tableId) {
+//        this.tableId = tableId;
+//    }
+
+    public Slot getSlot() {
+        return slot;
     }
 
-    public void setSlotId(Integer slotId) {
-        this.slotId = slotId;
+    public void setSlot(Slot slot) {
+        this.slot = slot;
     }
 
-    public Integer getTableId() {
-        return tableId;
+    public Table getTable() {
+        return table;
     }
 
-    public void setTableId(Integer tableId) {
-        this.tableId = tableId;
+    public void setTable(Table table) {
+        this.table = table;
     }
 }
 

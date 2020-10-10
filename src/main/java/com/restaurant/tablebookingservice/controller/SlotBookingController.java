@@ -1,41 +1,50 @@
 package com.restaurant.tablebookingservice.controller;
 
-import com.restaurant.tablebookingservice.dto.AvailableSlotsResponse;
-import com.restaurant.tablebookingservice.dto.CreateReservationRequest;
-import com.restaurant.tablebookingservice.dto.ReservationResponse;
-import com.restaurant.tablebookingservice.dto.UpdateReservationRequest;
-import com.restaurant.tablebookingservice.service.SlotsService;
+import com.restaurant.tablebookingservice.dto.*;
+import com.restaurant.tablebookingservice.service.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @RestController
 @RequestMapping("/v1")
 public class SlotBookingController {
-
-
     @Autowired
-    private SlotsService slotsService;
+    private ReservationService reservationService;
 
     @GetMapping("/availableSlots")
-    public ResponseEntity<AvailableSlotsResponse> getAvailableSlots(@RequestParam("date") String date) {
-        return null;
+    public ResponseEntity<List<AvailableSlotsResponse>> getAvailableSlots(@RequestParam("date") String date) {
+        return ResponseEntity.ok(reservationService.getAvailableSlots(LocalDate.parse(date)));
+    }
+
+    @GetMapping("/reservations/{date}")
+    public ResponseEntity<List<ActiveReservationsResponse>> getActiveReservations(@PathVariable("date") String date) {
+        LocalDate localDate = LocalDate.parse(date);
+        return ResponseEntity.ok(reservationService.getActiveBookings(localDate));
+    }
+
+    @GetMapping("/reservations/{id}")
+    public ResponseEntity<ActiveReservationsResponse> getReservationById(@PathVariable("id") String id) {
+        return ResponseEntity.ok(reservationService.getActiveReservation(id));
     }
 
     @PostMapping("/reservations")
     public ResponseEntity<ReservationResponse> createReservation(@RequestBody CreateReservationRequest createReservationRequest) {
-        ReservationResponse reservation = slotsService.createReservation(createReservationRequest);
+        ReservationResponse reservation = reservationService.createReservation(createReservationRequest);
         return ResponseEntity.ok(reservation);
     }
 
     @PutMapping("/reservations")
     public ResponseEntity<ReservationResponse> updateReservation(@RequestBody UpdateReservationRequest updateReservationRequest) {
-        ReservationResponse reservation = slotsService.updateReservation(updateReservationRequest);
+        ReservationResponse reservation = reservationService.updateReservation(updateReservationRequest);
         return ResponseEntity.ok(reservation);
     }
 
     @DeleteMapping("/reservations/{id}")
     public ResponseEntity<ReservationResponse> deleteReservation(@PathVariable("id") String id) {
-        return ResponseEntity.ok(slotsService.deleteReservation(id));
+        return ResponseEntity.ok(reservationService.deleteReservation(id));
     }
 }

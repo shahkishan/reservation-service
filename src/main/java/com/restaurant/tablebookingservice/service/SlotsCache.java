@@ -7,6 +7,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,23 +18,32 @@ public class SlotsCache {
     @Autowired
     private SlotsRepo slotsRepo;
 
-    private Map<String, Slot> slotsMap;
+    private Map<String, Slot> slotsByName;
+
 
     @PostConstruct
     @Scheduled(cron = "${slots.cache.reload.cron}")
     public void refresh() {
         List<Slot> slots = slotsRepo.findAll();
-        if(slotsMap==null) {
-            slotsMap = new HashMap<>();
+        if(slotsByName == null) {
+            slotsByName = new HashMap<>();
         }
 
-        slotsMap.putAll(slots.stream().collect(Collectors.toMap(Slot::getSlotTime, s -> s)));
+        slotsByName.clear();
+        slotsByName.putAll(slots.stream().collect(Collectors.toMap(Slot::getSlotTime, s -> s)));
     }
 
     public Slot get(String name) {
-        if(slotsMap.isEmpty()) {
+        if(slotsByName.isEmpty()) {
             refresh();
         }
-        return slotsMap.get(name);
+        return slotsByName.get(name);
+    }
+
+    public List<Slot> getSlots() {
+        if(slotsByName.isEmpty()) {
+            refresh();
+        }
+        return new ArrayList<>(slotsByName.values());
     }
 }
