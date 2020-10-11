@@ -1,13 +1,19 @@
 package com.restaurant.tablebookingservice.dto;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.Date;
 
 public class CreateReservationRequest {
+    @NotBlank(message = "Name cannot be empty")
     private String name;
+    @NotBlank(message = "Contact cannot be empty")
     private String contact;
+    @NotNull(message = "Date cannot be empty")
     private LocalDate reservationDate;
+    @NotBlank(message = "Time cannot be empty")
     private String reservationTime;
+    @NotBlank(message = "Table cannot be empty")
     private String tableName;
 
     public CreateReservationRequest() {

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -32,13 +33,13 @@ public class SlotBookingController {
     }
 
     @PostMapping("/reservations")
-    public ResponseEntity<ReservationResponse> createReservation(@RequestBody CreateReservationRequest createReservationRequest) {
+    public ResponseEntity<ReservationResponse> createReservation(@Valid @RequestBody CreateReservationRequest createReservationRequest) {
         ReservationResponse reservation = reservationService.createReservation(createReservationRequest);
         return ResponseEntity.ok(reservation);
     }
 
     @PutMapping("/reservations")
-    public ResponseEntity<ReservationResponse> updateReservation(@RequestBody UpdateReservationRequest updateReservationRequest) {
+    public ResponseEntity<ReservationResponse> updateReservation(@Valid @RequestBody UpdateReservationRequest updateReservationRequest) {
         ReservationResponse reservation = reservationService.updateReservation(updateReservationRequest);
         return ResponseEntity.ok(reservation);
     }

@@ -31,14 +31,28 @@ public class ReservationServiceImpl implements ReservationService {
     Logger logger = LoggerFactory.getLogger("ReservationServiceImpl");
 
     public List<AvailableSlotsResponse> getAvailableSlots(LocalDate date) {
-        return mapper.toAvailableSlots(reservationsRepo.findAllByReservationDate(date), date);
+        List<AvailableSlotsResponse> availableSlotsResponses = mapper
+                .toAvailableSlots(reservationsRepo.findAllByReservationDate(date), date);
+
+        if(availableSlotsResponses.isEmpty()) {
+            throw new ReservationException("No available slots found for the given date", HttpStatus.OK);
+        }
+
+        return availableSlotsResponses;
     }
 
     @Override
     public List<ActiveReservationsResponse> getActiveBookings(LocalDate date) {
         List<Reservation> activeReservations = reservationsRepo.findAllByReservationDate(date);
 
-        return activeReservations.stream().map(mapper::toActiveReservation).collect(Collectors.toList());
+        List<ActiveReservationsResponse> activeReservationResponses = activeReservations.stream()
+                .map(mapper::toActiveReservation).collect(Collectors.toList());
+
+        if(activeReservationResponses.isEmpty()) {
+            throw new ReservationException("No active reservations found for the given date", HttpStatus.OK);
+        }
+
+        return activeReservationResponses;
     }
 
     @Override
@@ -71,8 +85,11 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     private ReservationResponse getReservationResponse(Reservation reservation) {
+
         try {
-            reservationsRepo.save(reservation);
+            synchronized (reservation.getTable().getTableName()+"_"+reservation.getSlot().getSlotTime()) {
+                reservationsRepo.save(reservation);
+            }
         } catch (ConstraintViolationException e) {
             logger.error(e.getMessage());
             return new ReservationResponse("0", "UNAVAILABLE");
