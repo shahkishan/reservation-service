@@ -34,14 +34,14 @@ public class SlotsCache {
     }
 
     public Slot get(String name) {
-        if(slotsByName.isEmpty()) {
+        if(slotsByName==null || slotsByName.isEmpty()) {
             refresh();
         }
         return slotsByName.get(name);
     }
 
     public List<Slot> getSlots() {
-        if(slotsByName.isEmpty()) {
+        if(slotsByName==null || slotsByName.isEmpty()) {
             refresh();
         }
         return new ArrayList<>(slotsByName.values());

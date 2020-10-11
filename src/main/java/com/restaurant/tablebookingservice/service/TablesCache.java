@@ -39,14 +39,14 @@ public class TablesCache {
     }
 
     public Table get(String name) {
-        if(tablesByName.isEmpty()) {
+        if(tablesByName == null || tablesByName.isEmpty()) {
             refresh();
         }
         return tablesByName.get(name);
     }
 
     public List<Table> getTables() {
-        if(tablesByName.isEmpty()) {
+        if(tablesByName == null || tablesByName.isEmpty()) {
             refresh();
         }
 

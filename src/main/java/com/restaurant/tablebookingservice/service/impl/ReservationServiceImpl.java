@@ -88,7 +88,7 @@ public class ReservationServiceImpl implements ReservationService {
 
         try {
             synchronized (reservation.getTable().getTableName()+"_"+reservation.getSlot().getSlotTime()) {
-                reservationsRepo.save(reservation);
+                    reservationsRepo.save(reservation);
             }
         } catch (ConstraintViolationException e) {
             logger.error(e.getMessage());
