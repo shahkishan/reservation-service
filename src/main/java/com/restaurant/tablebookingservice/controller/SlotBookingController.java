@@ -16,8 +16,8 @@ public class SlotBookingController {
     @Autowired
     private ReservationService reservationService;
 
-    @GetMapping("/availableSlots")
-    public ResponseEntity<List<AvailableSlotsResponse>> getAvailableSlots(@RequestParam("date") String date) {
+    @GetMapping("/availableSlots/{date}")
+    public ResponseEntity<List<AvailableSlotsResponse>> getAvailableSlots(@PathVariable("date") String date) {
         return ResponseEntity.ok(reservationService.getAvailableSlots(LocalDate.parse(date)));
     }
 
